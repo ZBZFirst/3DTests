@@ -36,20 +36,11 @@ const labelRenderer = new CSS2DRenderer();
 labelRenderer.setSize(window.innerWidth, window.innerHeight);
 labelRenderer.domElement.style.position = 'absolute';
 labelRenderer.domElement.style.top = '0px';
+labelRenderer.domElement.style.pointerEvents = 'none';
 document.body.appendChild(labelRenderer.domElement);
 
 const labels = [];
 const labelDistance = gridSize / gridDivisions;
-
-for (let i = -gridDivisions/2; i <= gridDivisions/2; i++) {
-    for (let j = -gridDivisions/2; j <= gridDivisions/2; j++) {
-        if (i % 5 === 0 && j % 5 === 0) { // Only label every 5th intersection
-            const label = createLabel(`${i},${j}`, i * labelDistance, 0.1, j * labelDistance);
-            labels.push(label);
-            scene.add(label);
-        }
-    }
-}
 
 function createLabel(text, x, y, z) {
     const labelDiv = document.createElement('div');
@@ -58,10 +49,22 @@ function createLabel(text, x, y, z) {
     labelDiv.style.color = 'white';
     labelDiv.style.fontSize = '10px';
     labelDiv.style.pointerEvents = 'none';
+    labelDiv.style.textShadow = '1px 1px 1px black';
     
     const label = new CSS2DObject(labelDiv);
     label.position.set(x, y, z);
     return label;
+}
+
+// Create labels only at major grid lines (every 10 units)
+for (let i = -gridDivisions/2; i <= gridDivisions/2; i++) {
+    for (let j = -gridDivisions/2; j <= gridDivisions/2; j++) {
+        if (i % 10 === 0 && j % 10 === 0) { // Only label every 10th intersection
+            const label = createLabel(`${i},${j}`, i * labelDistance, 0.1, j * labelDistance);
+            labels.push(label);
+            scene.add(label);
+        }
+    }
 }
 
 // Movement controls
